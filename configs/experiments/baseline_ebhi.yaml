@@ -1,0 +1,55 @@
+# Baseline config (NO SAGE) for SAGE on EBHI-SEG
+# Pure ConvNeXt-Large + ViT-Large architecture without Mixture of Layer Experts
+# Dataset: EBHI-SEG (Endoscopic Bleeding & Hemorrhage Imaging)
+# Training: 555 samples / Validation: 120 samples
+
+################################################################################
+# DATA CONFIGURATION
+################################################################################
+data:
+  dataset_config: "configs/datasets/ebhi.yaml"
+  img_size: 224           # MUST match model.img_size (ViT-Large patch32 uses 224)
+  batch_size: 8           # per-GPU batch (8 GPUs x 8 = 64 effective)
+  num_workers: 4          # per-process (8 procs x 4 = 32 total workers)
+  pin_memory: true
+
+################################################################################
+# MODEL CONFIGURATION
+################################################################################
+model:
+  name: "ConvNeXt_Transformer_UNet"
+  num_classes: 2
+  img_size: 224           # MUST match data.img_size
+  use_sage: false        # DISABLED: No SAGE, pure baseline
+  convnext_variant: "convnext_large"
+  vit_variant: "vit_large_patch32_224"
+  num_transformer_layers: 24
+  freeze_encoder: false
+  freeze_transformer: false
+
+################################################################################
+# TRAINING CONFIGURATION (Single Stage - No SAGE)
+################################################################################
+training:
+  stage1_epochs: 100      # Only 1 stage for baseline
+  stage2_epochs: 0        # Disabled (no expert freezing needed)
+  base_lr: 0.00005       
+  optimizer: "AdamW"
+  weight_decay: 0.001      # Keeping the stronger regularization
+  momentum: 0.9
+  scheduler: "CosineAnnealingLR"
+  warmup_epochs: 10       # NEW: Linear warmup for the first 10 epochs
+  early_stopping:
+    patience: 15
+    delta: 0.0
+  seed: 42
+
+################################################################################
+# OUTPUT & LOGGING
+################################################################################
+output:
+  experiment_name: "baseline_unet_ebhi_no_sage"
+
+logging:
+  visualization_frequency: 10
+  visualization_samples: 3

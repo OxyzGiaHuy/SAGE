@@ -1,0 +1,85 @@
+# Phase 2 Best Config Template (to be filled after search)
+# Copy this to config_baseline_ebhi_no_sage_phase2.yaml after finding best params
+
+################################################################################
+# DATA CONFIGURATION
+################################################################################
+data:
+  dataset_config: "configs/datasets/ebhi.yaml"
+  img_size: 224
+  batch_size: 8              # TODO: Update from search results
+  num_workers: 4
+  pin_memory: true
+
+################################################################################
+# MODEL CONFIGURATION
+################################################################################
+model:
+  name: "ConvNeXt_Transformer_UNet"
+  num_classes: 2
+  img_size: 224
+  use_sage: false
+  convnext_variant: "convnext_large"
+  vit_variant: "vit_large_patch32_224"
+  num_transformer_layers: 24
+  freeze_encoder: false
+  freeze_transformer: false
+  
+  # PHASE 2 NEW: Dropout settings
+  dropout: 0.3               # TODO: Update from search results (transformer dropout)
+  encoder_dropout: 0.1       # TODO: Update from search results (encoder dropout)
+
+################################################################################
+# TRAINING CONFIGURATION
+################################################################################
+training:
+  stage1_epochs: 100         # INCREASED: 50 → 100 for full training
+  stage2_epochs: 0
+  
+  # Optimizer settings
+  base_lr: 0.00005           # TODO: Update from search results
+  optimizer: "AdamW"         # TODO: Update from search results
+  weight_decay: 0.001        # TODO: Update from search results (likely higher than 0.0001)
+  momentum: 0.9
+  
+  # PHASE 2 NEW: Learning rate warmup
+  warmup_epochs: 10          # TODO: Update from search results
+  warmup_factor: 0.1         # TODO: Update from search results
+  
+  # Scheduler
+  scheduler: "CosineAnnealingLR"  # TODO: Update from search results
+  scheduler_params:
+    T_max: 100               # FIXED: Match stage1_epochs (not 10!)
+    eta_min: 1e-7
+  
+  # PHASE 2 NEW: Regularization
+  label_smoothing: 0.05      # TODO: Update from search results
+  grad_clip: 1.0             # TODO: Update from search results
+  
+  # PHASE 2 NEW: Augmentation
+  aug_strength: "medium"     # TODO: Update from search results (light/medium/strong)
+  
+  # Early stopping
+  early_stopping:
+    patience: 20             # INCREASED: 15 → 20 for longer training
+    delta: 0.0
+  
+  seed: 42
+
+################################################################################
+# OUTPUT & LOGGING
+################################################################################
+output:
+  experiment_name: "baseline_unet_ebhi_no_sage_phase2"
+  save_checkpoints: true
+  log_interval: 10
+
+################################################################################
+# NOTES
+################################################################################
+# After Phase 2 search completes:
+# 1. Open hyperparam_weights_v2/[exp_name]/search_results.csv
+# 2. Find row with highest best_val_iou
+# 3. Copy hyperparameters to this config
+# 4. Run full training:
+#    bash eccv/run_baseline_ebhi_phase2.sh

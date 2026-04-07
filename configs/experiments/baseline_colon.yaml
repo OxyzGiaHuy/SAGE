@@ -1,0 +1,62 @@
+# Baseline config (NO SAGE) for SAGE on Colon Cancer Segmentation (ECCV)
+# Pure ConvNeXt-Large + ViT-Large architecture without Mixture of Layer Experts
+# Dataset: 27,321 train / 7,528 val / 5,939 test
+
+################################################################################
+# DATA CONFIGURATION
+################################################################################
+data:
+  dataset_config: "configs/datasets/colon.yaml"
+  img_size: 512           # MUST match model.img_size
+  batch_size: 4           # per-GPU batch (8 GPUs x 4 = 32 effective)
+  num_workers: 4          # per-process (8 procs x 4 = 32 total workers)
+  pin_memory: true
+
+################################################################################
+# MODEL CONFIGURATION
+################################################################################
+model:
+  name: "ConvNeXt_Transformer_UNet"
+  num_classes: 2
+  img_size: 512           # MUST match data.img_size
+  use_sage: false        # DISABLED: No SAGE, pure baseline
+  convnext_variant: "convnext_large"
+  vit_variant: "vit_large_patch32_224"
+  num_transformer_layers: 24
+  freeze_encoder: false
+  freeze_transformer: false
+
+################################################################################
+# TRAINING CONFIGURATION (Single Stage - No SAGE)
+# DDP: launched via torchrun --nproc_per_node=8, LOCAL_RANK set automatically
+################################################################################
+training:
+  stage1_epochs: 100      # Only 1 stage for baseline
+  stage2_epochs: 0        # Disabled (no expert freezing needed)
+  use_amp: true             # BF16 mixed precision — ~40% faster on A100, no accuracy loss
+  base_lr: 0.0007
+  optimizer: "AdamW"
+  weight_decay: 0.0001
+  momentum: 0.9
+  scheduler: "CosineAnnealingLR"
+  early_stopping:
+    patience: 15
+    delta: 0.0001
+  seed: 42
+
+################################################################################
+# OUTPUT & LOGGING
+################################################################################
+output:
+  experiment_name: "eccv_baseline_colon"
+
+logging:
+  visualization_frequency: 10
+  visualization_samples: 3
+
+################################################################################
+# WSI EVALUATION CONFIGURATION
+################################################################################
+wsi:
+  raw_pos_path: "/path/to/Colon/tissue-train-pos-v1"
+  raw_neg_path: "/path/to/Colon/tissue-train-neg"

@@ -1,0 +1,24 @@
+# Dataset configuration for GlaS (Glandular Structures in Colon Histology)
+# Warwick QU Dataset - Histopathology gland segmentation
+root_dir: /path/to/dataset/processed_glas
+
+# Number of classes in the segmentation task
+num_classes: 2
+
+# Suffix to append to image filename to get mask filename
+mask_suffix: "_mask"
+
+# Training set configuration
+train:
+  images: train/images
+  masks: train/masks
+
+# Validation set configuration
+val:
+  images: val/images
+  masks: val/masks
+
+# Test set configuration (GlaS has official test set - usually used for final evaluation)
+test:
+  images: testAB/images
+  masks: testAB/masks

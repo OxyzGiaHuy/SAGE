@@ -1,0 +1,67 @@
+# 2-Stage training config for SAGE on EBHI-SEG (ECCV)
+# ConvNeXt-Large + ViT-Large + SAGE architecture
+# This file is mainly used for evaluation/benchmark scripts.
+
+################################################################################
+# DATA CONFIGURATION
+################################################################################
+data:
+  dataset_config: "configs/datasets/ebhi.yaml"
+  img_size: 224
+  batch_size: 8
+  num_workers: 4
+  pin_memory: true
+
+################################################################################
+# MODEL CONFIGURATION
+################################################################################
+model:
+  name: "ConvNeXt_Transformer_UNet"
+  num_classes: 2
+  img_size: 224
+  use_sage: true
+  convnext_variant: "convnext_large"
+  vit_variant: "vit_large_patch32_224"
+  num_transformer_layers: 24
+  freeze_encoder: false
+  freeze_transformer: false
+
+################################################################################
+# SAGE CONFIGURATION
+################################################################################
+sage:
+  top_k: 4
+  gating_type: "sigmoid"
+  expert_dropout: 0.1
+  router_hidden_dim: 256
+  load_balance_factor: 0.01
+  shared_expert_indices: []
+
+################################################################################
+# 2-STAGE TRAINING CONFIGURATION
+################################################################################
+training:
+  stage1_epochs: 50
+  stage2_epochs: 150
+  num_shared_experts: 4
+  base_lr: 0.0001
+  stage2_base_lr: 0.0001
+  stage2_shared_lr: 0.00005
+  optimizer: "AdamW"
+  weight_decay: 0.0001
+  momentum: 0.9
+  scheduler: "CosineAnnealingLR"
+  early_stopping:
+    patience: 15
+    delta: 0.0001
+  seed: 42
+
+################################################################################
+# OUTPUT & LOGGING CONFIGURATION
+################################################################################
+output:
+  experiment_name: "sage_unet_2stage_ebhi"
+
+logging:
+  visualization_frequency: 10
+  visualization_samples: 3

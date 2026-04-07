@@ -1,0 +1,26 @@
+# Dataset configuration for Colon Cancer Segmentation (ECCV experiments)
+# Root directory for Colon dataset
+root_dir: /path/to/dataset/processed_colon
+
+# Number of classes in the segmentation task
+num_classes: 2
+
+# Suffix to append to image filename to get mask filename
+# For example: if image is "sample.jpg" and suffix is "_mask"
+# then mask should be "sample_mask.png"
+mask_suffix: "_mask"
+
+# Training set configuration
+train:
+  images: train/images
+  masks: train/masks
+
+# Validation set configuration
+val:
+  images: val/images
+  masks: val/masks
+
+# Test set configuration
+test:
+  images: test/images
+  masks: test/masks
