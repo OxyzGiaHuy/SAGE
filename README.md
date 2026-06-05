@@ -105,11 +105,13 @@ We gratefully acknowledge The University of Texas at Austin for supporting this 
 If you find this research useful, please consider citing our work:
 
 ```bibtex
-@article{thai2026sage,
-  title={SAGE: Shape-Adapting Gated Experts for Adaptive Histopathology Image Segmentation},
-  author={Thai, Gia Huy and Vu, Hoang-Nguyen and Phan, Anh-Minh and Ly, Quang-Thinh and Dinh, Tram and Nguyen, Thi-Ngoc-Truc and Ho, Nhat},
-  journal={arXiv preprint arXiv:2511.18493},
-  year={2026}
+@InProceedings{Thai_2026_CVPR,
+    author    = {Thai, Gia Huy and Vu, Hoang-Nguyen and Phan, Anh-Minh and Ly, Quang-Thinh and Nguyen, Thi-Ngoc-Truc and Ho, Nhat},
+    title     = {SAGE: Shape-Adapting Gated Experts for Adaptive Histopathology Image Segmentation},
+    booktitle = {Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition (CVPR) Findings},
+    month     = {June},
+    year      = {2026},
+    pages     = {7337-7346}
 }
 ```
 
